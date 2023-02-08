@@ -64,10 +64,21 @@ export const Icon = React.forwardRef(
     )
   )
 export const Portal = ({ children }) => {
-    return typeof document === 'object'
-      ? ReactDOM.createPortal(children, document.body)
+    const [mounted, setMounted] = useState(false)
+
+   useEffect(() => {
+      setMounted(true)
+
+      return () => setMounted(false)
+   }, [])
+
+   return mounted
+      ? ReactDOM.createPortal(children, 
+        document.body)
       : null
-  }
+}
+
+
   export const Menu = React.forwardRef(
     (
       { className, ...props },
@@ -196,6 +207,7 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
               window.pageXOffset -
               el.offsetWidth / 2 +
               rect?.width / 2}px`
+         
         }
      
   })
@@ -248,7 +260,7 @@ const FormatButton = ({ format, icon,open, setOpen, handleClick,currentComment }
     <Button
       reversed
       active={isFormatActive(editor, format)}
-      onClick={() => {toggleFormat(editor, format);setOpen(true)}}
+      onClick={() => {toggleFormat(editor, format);}}
     >
       <Icon>{icon}</Icon>
     </Button>
