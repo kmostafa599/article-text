@@ -11,7 +11,7 @@ import {
 import { withHistory } from 'slate-history'
 import ReactDOM from 'react-dom'
 import { cx, css } from '@emotion/css'
-
+import { v4 as uuidv4, v6 as uuidv6 } from 'uuid';
 // import { Button, Icon, Menu, Portal } from '../components'
 export const Button = React.forwardRef(
   (
@@ -52,14 +52,7 @@ export const Icon = React.forwardRef(
       <span
         {...props}
         ref={ref}
-        className={cx(
-          'material-icons',
-          className,
-          css`
-            font-size: 18px;
-            vertical-align: text-bottom;
-          `
-        )}
+        
       />
     )
   )
@@ -101,7 +94,7 @@ export const Portal = ({ children }) => {
       />
     )
   )
-const HoveringMenuExample = ({open,setOpen,textId,setTextId,handleClick,currentComment}) => {
+const HoveringMenuExample = ({open,setOpen,handleClick,currentComment}) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
   const [arr,setArr] = useState([])
   
@@ -109,7 +102,7 @@ const HoveringMenuExample = ({open,setOpen,textId,setTextId,handleClick,currentC
     <Slate editor={editor} value={initialValue}>
       <HoveringToolbar open={open} setOpen={setOpen} handleClick={handleClick} currentComment={currentComment}/>
       <Editable
-        renderLeaf={props => <Leaf {...props} open={open} setOpen={setOpen} handleClick={handleClick}/>}
+        renderLeaf={props => <Leaf {...props} handleClick={handleClick}/>}
         placeholder="Enter some text..."
        
       />
@@ -117,15 +110,16 @@ const HoveringMenuExample = ({open,setOpen,textId,setTextId,handleClick,currentC
   )
 }
 
-const toggleFormat = (editor, format) => {
+const toggleFormat = (editor, format,open,setOpen) => {
   const isActive = isFormatActive(editor, format)
-//   console.log(Transforms.)
+  let id = uuidv4()
 
   Transforms.setNodes(
     editor,
-    { [format]: isActive ? null : true },
-    { match: Text.isText, split: true }
+    { [format]: isActive ? null : true, id:id },
+    { match: Text.isText, split: true,at:editor.selection },
   )
+  // setOpen(true)
 }
 
 const isFormatActive = (editor, format) => {
@@ -136,34 +130,9 @@ const isFormatActive = (editor, format) => {
   return !!match
 }
 
-const Leaf = ({ attributes, children, leaf,open,setOpen,arr,textId,setTextId, handleClick }) => {
-    // console.log({children})
-//   if (leaf.bold) {
-//     children = <strong>{children}</strong>
-//   }
-
-//   if (leaf.italic) {
-//     children = <em>{children}</em>
-//   }
-
-//   if (leaf.underlined) {
-//     children = <u>{children}</u>
-//   }
+const Leaf = ({ attributes, children, leaf, handleClick}) => {
   if(leaf.popup){
-    // console.log(leaf)
-    children = <a className="highlited" onClick={()=>
-        handleClick(leaf)
-        // setOpen(!open);
-        // console.log("ARR")
-        // console.log(leaf.text)
-        // setTextId(leaf.text)
-        // console.log("TEXT ID: ",textId)
-        // // if(arr?.filter(item=>item!==leaf.text)){
-        // //     console.log("located")
-        // // }
-        }>
-            {children}
-    </a>
+    children = <a className="highlited" onClick={()=>handleClick(leaf)}>{children}</a>
   }
   return <span {...attributes}>{children}</span>
 }
@@ -172,7 +141,7 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
   const ref = useRef()
   const editor = useSlate()
   const inFocus = useFocused()
-
+  const [domCurrentSelection,setDOMCurrentSelection] = useState('')
   useEffect(() => {
     const el = ref.current
     const { selection } = editor
@@ -192,25 +161,19 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
     }
 
     const domSelection = window.getSelection()
-    // let domRange = null
-    // let domRange =  null
-    // console.log(domSelection)
-    // if(domSelection !== null){
+      // setDOMCurrentSelection(domSelection)
         if(domSelection){
-            const domRange =  domSelection?.getRangeAt(0)
-            console.log(domRange?.getBoundingClientRect())
-            // }
-            const rect = domRange?.getBoundingClientRect()
-            el.style.opacity = '1'
-            el.style.top = `${rect?.top + window.pageYOffset + el.offsetHeight}px`
-            el.style.left = `${rect?.left +
-              window.pageXOffset -
-              el.offsetWidth / 2 +
-              rect?.width / 2}px`
-         
+          const domRange =  domSelection?.getRangeAt(0)
+          console.log(domRange?.getBoundingClientRect())
+          const rect = domRange?.getBoundingClientRect()
+          el.style.opacity = '1'
+          el.style.top = `${rect?.top + window.pageYOffset + el.offsetHeight}px`
+          el.style.left = `${rect?.left +
+            window.pageXOffset -
+            el.offsetWidth / 2 +
+            rect?.width / 2}px`
         }
-     
-  })
+})
 
   return (
     <Portal>
@@ -234,33 +197,34 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
         }}
       >
         <FormatButton format="popup" icon="Start Annotation" open={open} setOpen={setOpen} currentComment={currentComment}/>
-        
+
       </Menu>
     </Portal>
   )
 }
 
-const FormatButton = ({ format, icon,open, setOpen, handleClick,currentComment }) => {
+const FormatButton = ({ format, icon,open, setOpen, handleClick,currentComment,domCurrentSelection }) => {
   const editor = useSlate()
-  console.log(editor.children)
-  let obj = editor.children.find((child) => {
-    return child.children.some((item) => {
-      return item.popup === true;
-    });
-  })
+  // console.log(editor.children)
+  // console.log("FORMAT BUTTON: ",editor.selection)
+  // let obj = editor.children.find((child) => {
+  //   return child.children.some((item) => {
+  //     return item.popup === true;
+  //   });
+  // })
 
-  let elements = obj?.children?.filter(i=>i?.popup) 
-  console.log("elements",elements)
-  let fullText = ''
-  elements?.map(element=>{fullText += element.text} )
-  console.log("fullText",fullText)
+  // let elements = obj?.children?.filter(i=>i?.popup) 
+  // console.log("elements",elements)
+  // let fullText = ''
+  // elements?.map(element=>{fullText += element.text} )
+  // console.log("fullText",fullText)
 
 //   console.log(editor.children[0].children.filter(child=>child?.popup))
   return (
     <Button
       reversed
       active={isFormatActive(editor, format)}
-      onClick={() => {toggleFormat(editor, format);}}
+      onClick={() => {toggleFormat(editor, format,open,setOpen);}}
     >
       <Icon>{icon}</Icon>
     </Button>
