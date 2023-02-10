@@ -8,18 +8,22 @@ const Popup = ({open, setOpen,toggleEdit, setToggleEdit, textString, handleChang
       }}>
         {currentComment ?
           <div
-            style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', flexDirection: 'column', }}
+            style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', flexDirection: 'column' }}
           >
             {!toggleEdit ?
-              <div style={{ width: '100%', paddingLeft: "2rem" }}>
-                <div style={{ textAlign: 'centeleftr' }} >
-                  Comment for "{textString}":
-                </div>
-                <div style={{ textAlign: 'center' }}>
-
-                </div>
-                {currentComment}
-              </div> : <input type="text" value={currentComment} onChange={handleCommentChange} />}
+            <div style={{padding:"1rem"}}>
+             <div style={{fontSize:"1.5em",textAlign:"center"}}>Comment for</div>  
+ <div style={{ width: '100%', textAlign:"left"}}>
+  
+                  <span style={{margin:"1rem",padding:"1rem", width:"100%", textAlign:"left"}}><div style={{backgroundColor:"#c9c9c9",padding:"0.1rem",textAlign:"center"}}>"{textString}" </div> </span>
+                  <br /> 
+                  <div style={{textAlign:"center",fontWeight:"bold"}}>
+                  {/* <span style={{margin:"1rem"}}></span> */}
+                  {currentComment}
+                  </div>
+              </div>
+            </div>
+              : <input type="text" value={currentComment} onChange={handleCommentChange} />}
 
             <div>
               <br />
