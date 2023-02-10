@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { createEditor} from 'slate'
-import HoveringToolbar from './components/HoveringToolbar'
+import HoveringToolbar from '../components/HoveringToolbar'
 import { withReact } from 'slate-react'
-import Popup from './components/Popup'
+import Popup from '../components/Popup'
 
 export default function Home() {
   const [editor] = useState(() => withReact(createEditor()))
