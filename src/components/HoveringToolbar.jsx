@@ -97,10 +97,10 @@ export const Portal = ({ children }) => {
 const HoveringMenuExample = ({open,setOpen,handleClick,currentComment}) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
   const [arr,setArr] = useState([])
-  const onDoubleClick = () =>{
+  const onClickCapture = () =>{
     // (event)=>{
       // console.log(event)
-      toggleFormat(editor,"popup",open, setOpen)
+      toggleFormat(editor,"popup",open, setOpen,handleClick)
     return true
   }
   return (
@@ -112,7 +112,7 @@ const HoveringMenuExample = ({open,setOpen,handleClick,currentComment}) => {
       <Editable
         renderLeaf={props => <Leaf {...props} handleClick={handleClick}/>}
         placeholder="Enter some text..."
-        onDoubleClick={onDoubleClick}
+        onClickCapture={onClickCapture}
       
        
       />
@@ -120,15 +120,37 @@ const HoveringMenuExample = ({open,setOpen,handleClick,currentComment}) => {
   )
 }
 
-const toggleFormat = (editor, format,open,setOpen) => {
+const toggleFormat = (editor, format,open,setOpen, handleClick) => {
+  // const editor = useSlate()
+  console.log(editor.children)
+  
+
+  // console.log("elements",elements)
+  // let fullText = ''
+  // elements?.map(element=>{fullText += element.text} )
+  // console.log("fullText",fullText)
   const isActive = isFormatActive(editor, format)
   let id = uuidv4()
+  const {selection} = editor
+  console.log(selection)
   setOpen(true)
   Transforms.setNodes(
     editor,
     { [format]: isActive ? null : true, id:id },
     { match: Text.isText, split: true,at:editor.selection },
   )
+  console.log(editor)
+  let obj = editor.children.find((child) => {
+    return child.children.some((item) => {
+      return item.id === id;
+    });
+  })
+  let element = obj?.children?.filter(i=>i?.id)[0]
+
+  console.log({element})
+  setOpen(false)
+  handleClick(element)
+
   // setOpen(true)
 }
 

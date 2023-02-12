@@ -17,9 +17,9 @@ export default function Home() {
   const addText = (newText) => setDescriptions(d => [...d, newText])
   const hasComment = (text) => {
     console.log("HAS COMMENT TEXT: ", text)
-    let temp = descriptions.filter(d => d.id == text.id)[0]
+    let temp = descriptions.filter(d => d?.id == text?.id)[0]
     console.log(temp)
-    if (temp.comment) {
+    if (temp?.comment) {
       console.log("SET CURRENT COMMENT")
       setCurrentComment(temp.comment)
     }
@@ -27,16 +27,17 @@ export default function Home() {
 
   const handleClick = (text) => {
     console.log("Hello")
+    console.log(text)
     setOpen(true);
     //clear current comment
     setComment('')
     setCurrentComment('')
     //set current selected text
-    setTextString(text.text)
-    setTextId(text.id)
+    setTextString(text?.text)
+    setTextId(text?.id)
     
     console.log("TEXT ID: ", text)
-    const value = descriptions.filter(item => item.id == text.id)
+    const value = descriptions.filter(item => item?.id == text?.id)
     if (!value.length) {
       console.log("Not found")
       addText(text)
@@ -61,7 +62,7 @@ export default function Home() {
 
       // edit mode
     if (text == 'inline') {
-      let objIndex = descriptions.findIndex((item) => item.id == textId)
+      let objIndex = descriptions.findIndex((item) => item?.id == textId)
       let tempArr = [...descriptions]
       setTextId(tempArr[objIndex]?.id)
       setTextString(tempArr[objIndex]?.text)
@@ -75,7 +76,7 @@ export default function Home() {
       setCurrentComment(currentComment)
       return
     }
-    let objIndex = descriptions.findIndex((item) => item.id == textId)
+    let objIndex = descriptions.findIndex((item) => item?.id == textId)
     let tempArr = [...descriptions]
     setTextId(tempArr[objIndex]?.id)
       setTextString(tempArr[objIndex]?.text)
