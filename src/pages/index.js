@@ -14,33 +14,41 @@ export default function Home() {
   const [toggleEdit, setToggleEdit] = useState(false)
   const [textString,setTextString] =useState('')
 
+  //adding text to descriptions list
   const addText = (newText) => setDescriptions(d => [...d, newText])
+  //
   const hasComment = (text) => {
     console.log("HAS COMMENT TEXT: ", text)
+    //extracting the text from descriptions
     let temp = descriptions.filter(d => d?.id == text?.id)[0]
     console.log(temp)
+    //check if it has comment
     if (temp?.comment) {
-      console.log("SET CURRENT COMMENT")
-      setCurrentComment(temp.comment)
+      console.log("COMMENT FOUND")
+      setCurrentComment(temp.comment) //assign their comment
       return true
     }
+    console.log("COMMENT NOT FOUND")
   }
 
   const handleClick = (text) => {
+    //clear current comment
+    setComment('')
+    setCurrentComment('')
+    console.log("STEP 1")
     console.log("Hello")
     console.log(text)
     if(text?.text==null){
       return
     }
     setOpen(true);
-    //clear current comment
-    setComment('')
-    setCurrentComment('')
+    
     //set current selected text
     setTextString(text?.text)
     setTextId(text?.id)
     
-    console.log("TEXT ID: ", text)
+    console.log("TEXT ID: ", text.id)
+    //check if text is saved prevousily
     const value = descriptions.filter(item => item?.id == text?.id)
     if (!value.length) {
       console.log("Not found")
@@ -81,16 +89,21 @@ export default function Home() {
       return
     }
     let objIndex = descriptions.findIndex((item) => item?.id == textId)
+    //save all desc. to temp array
     let tempArr = [...descriptions]
+    //set current text id and text string
     setTextId(tempArr[objIndex]?.id)
-      setTextString(tempArr[objIndex]?.text)
+    setTextString(tempArr[objIndex]?.text)
+    //update text object in the temp array
     tempArr[objIndex] = {
       id: tempArr[objIndex]?.id,
       text: tempArr[objIndex]?.text,
       popup: true,
       comment: comment,
     }
+    //set desc. to the new created array
     setDescriptions(tempArr)
+    //set current comment to the comment
     setCurrentComment(comment)
   }
   return (
@@ -108,6 +121,9 @@ export default function Home() {
           handleSave={handleSave}
           currentComment={currentComment}
           comment={comment}
+          descriptions={descriptions}
+          setDescriptions={setDescriptions}
+          textId={textId}
         />
       </div>
     </div>)

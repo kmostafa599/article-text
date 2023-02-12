@@ -30,25 +30,25 @@ const HoveringMenuExample = ({open,setOpen,handleClick,currentComment,descriptio
 
 const toggleFormat = (editor, format,open,setOpen, handleClick) => {
   // const editor = useSlate()
-  console.log(editor.children)
+  // console.log(editor.children)
   
   const isActive = isFormatActive(editor, format)
   let id = uuidv4()
-  const {selection} = editor
-  console.log(selection)
+  // const {selection} = editor
+  // console.log(selection)
   Transforms.setNodes(
     editor,
     { [format]: isActive ? null : true, id:id },
     { match: Text.isText, split: true,at:editor.selection },
   )
-  console.log(editor)
+  // console.log(editor)
   let obj = editor.children.find((child) => {
     return child.children.some((item) => {
       return item.id === id;
     });
   })
-
-  let element = obj?.children?.filter(i=>i?.id)[0]
+  console.log({obj})
+  let element = obj?.children?.filter(i=>i?.id==id)[0]
 
   console.log({element})
   // if(element?.text !== null){
@@ -67,7 +67,7 @@ const isFormatActive = (editor, format) => {
     match: n => n[format] === true,
     mode: 'all',
   })
-  console.log(match)
+  console.log("match: ", match)
   return !!match
 }
 
@@ -76,10 +76,10 @@ const Leaf = ({ attributes, children, leaf, handleClick, descriptions}) => {
     let flag = false
     descriptions?.map(d=>{if(leaf.id===d.id){
       if(d.comment){
-        flag =true
+        flag = true
       }
     }})
-    children = <a className={flag?"highlited":null} onClick={()=>handleClick(leaf)}>{children}</a>
+    children = <a className={flag?"highlited":null} onClick={(e)=>{e.preventDefault();handleClick(leaf)}}>{children}</a>
   }
   return <span {...attributes}>{children}</span>
 }

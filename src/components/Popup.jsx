@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Popup = ({open, setOpen,toggleEdit, setToggleEdit, textString, handleChange, handleCommentChange, handleSave, currentComment,comment}) => {
+const Popup = ({open, setOpen,toggleEdit, setToggleEdit, textId,textString, handleChange, handleCommentChange, handleSave, currentComment,comment,descriptions,setDescriptions}) => {
   return (
     <div className='container' style={{
         right: open ? '200px' : '-300px', transitionProperty: 'all',
@@ -54,7 +54,20 @@ const Popup = ({open, setOpen,toggleEdit, setToggleEdit, textString, handleChang
               <br />
               <div className='form-footer' style={{ width: '100%' }}>
                 <div className="save" onClick={handleSave} >Save</div>
-                <div className="cancel" onClick={() => setOpen(false)} >Cancel</div>
+                <div className="cancel" onClick={() =>{
+                  if(comment == ""){
+                    // console.log(temp)
+                    if(descriptions){
+                      console.log(textId)
+                      let temp = descriptions?.filter(d=>d.id != textId)
+                      console.log("temp: ",temp)
+                      setDescriptions(temp)
+                      console.log("DESC..",descriptions)
+                    }
+                  }
+                  // if(descriptions)
+                  setOpen(false)
+                } } >Cancel</div>
               </div>
             </div>
             <br />
