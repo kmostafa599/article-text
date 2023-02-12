@@ -27,7 +27,7 @@ export default function Home() {
 
   const handleClick = (text) => {
     console.log("Hello")
-    setOpen(!open);
+    setOpen(true);
     //clear current comment
     setComment('')
     setCurrentComment('')
