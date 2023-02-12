@@ -9,10 +9,15 @@ import {
 import { withHistory } from 'slate-history'
 import { v4 as uuidv4, v6 as uuidv6 } from 'uuid';
 
-const HoveringMenuExample = ({open,setOpen,handleClick,currentComment,descriptions}) => {
+const HoveringMenuExample = ({open,setOpen,handleClick,currentComment,descriptions,textId}) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
-  const onClickCapture = () =>{
-    // e.preventDefault()
+  const onClickCapture = (e) =>{
+    if(descriptions.filter(d=>d.id==textId)[0]){
+      console.log(descriptions.filter(d=>d.id==textId)[0])
+      // return
+      e.preventDefault()
+      return
+    }
     toggleFormat(editor,"popup",open, setOpen,handleClick)
     // return true
   }
@@ -20,7 +25,7 @@ const HoveringMenuExample = ({open,setOpen,handleClick,currentComment,descriptio
     <Slate editor={editor} value={initialValue}    
     >
       <Editable
-        renderLeaf={props => <Leaf {...props} handleClick={handleClick} descriptions={descriptions}/>}
+        renderLeaf={props => <Leaf {...props} handleClick={handleClick} descriptions={descriptions} textId={textId}/>}
         placeholder="Enter some text..."
         onClickCapture={onClickCapture}
       />
@@ -71,7 +76,7 @@ const isFormatActive = (editor, format) => {
   return !!match
 }
 
-const Leaf = ({ attributes, children, leaf, handleClick, descriptions}) => {
+const Leaf = ({ attributes, children, leaf, handleClick, descriptions,textId}) => {
   if(leaf.popup){
     let flag = false
     descriptions?.map(d=>{if(leaf.id===d.id){
@@ -79,7 +84,13 @@ const Leaf = ({ attributes, children, leaf, handleClick, descriptions}) => {
         flag = true
       }
     }})
-    children = <a className={flag?"highlited":null} onClick={(e)=>{e.preventDefault();handleClick(leaf)}}>{children}</a>
+    children = <a className={flag?"highlited":null} onClick={(e)=>{
+      if(descriptions.filter(d=>d.id==textId)[0]){
+        e.preventDefault();
+        return
+      }
+      handleClick(leaf)
+    }}>{children}</a>
   }
   return <span {...attributes}>{children}</span>
 }

@@ -110,7 +110,7 @@ export default function Home() {
     <div style={{ display: 'flex', alignItems: 'center', margin: "5rem" }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <div style={{ position: 'fixed', left: '100px', width: '50%' }}>
-          <HoveringToolbar open={open} setOpen={setOpen} handleClick={handleClick} hasComment={hasComment} descriptions={descriptions}/>
+          <HoveringToolbar open={open} setOpen={setOpen} handleClick={handleClick} hasComment={hasComment} descriptions={descriptions} textId={textId}/>
         </div>
 
         <Popup open={open} setOpen={setOpen} toggleEdit={toggleEdit}
