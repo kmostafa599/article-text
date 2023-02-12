@@ -22,12 +22,16 @@ export default function Home() {
     if (temp?.comment) {
       console.log("SET CURRENT COMMENT")
       setCurrentComment(temp.comment)
+      return true
     }
   }
 
   const handleClick = (text) => {
     console.log("Hello")
     console.log(text)
+    if(text?.text==null){
+      return
+    }
     setOpen(true);
     //clear current comment
     setComment('')
@@ -93,18 +97,18 @@ export default function Home() {
     <div style={{ display: 'flex', alignItems: 'center', margin: "5rem" }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <div style={{ position: 'fixed', left: '100px', width: '50%' }}>
-          <HoveringToolbar open={open} setOpen={setOpen} handleClick={handleClick} />
+          <HoveringToolbar open={open} setOpen={setOpen} handleClick={handleClick} hasComment={hasComment} descriptions={descriptions}/>
         </div>
 
         <Popup open={open} setOpen={setOpen} toggleEdit={toggleEdit}
-setToggleEdit={setToggleEdit}
-textString={textString}
-handleChange={handleChange}
-handleCommentChange={handleCommentChange}
-handleSave={handleSave}
-currentComment={currentComment}
-comment={comment}/>
-
+          setToggleEdit={setToggleEdit}
+          textString={textString}
+          handleChange={handleChange}
+          handleCommentChange={handleCommentChange}
+          handleSave={handleSave}
+          currentComment={currentComment}
+          comment={comment}
+        />
       </div>
     </div>)
 }
