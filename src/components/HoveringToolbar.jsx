@@ -97,13 +97,23 @@ export const Portal = ({ children }) => {
 const HoveringMenuExample = ({open,setOpen,handleClick,currentComment}) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), [])
   const [arr,setArr] = useState([])
-  
+  const onDoubleClick = () =>{
+    // (event)=>{
+      // console.log(event)
+      toggleFormat(editor,"popup",open, setOpen)
+    return true
+  }
   return (
-    <Slate editor={editor} value={initialValue}>
+    <Slate editor={editor} value={initialValue}
+    // onChange={}
+    
+    >
       <HoveringToolbar open={open} setOpen={setOpen} handleClick={handleClick} currentComment={currentComment}/>
       <Editable
         renderLeaf={props => <Leaf {...props} handleClick={handleClick}/>}
         placeholder="Enter some text..."
+        onDoubleClick={onDoubleClick}
+      
        
       />
     </Slate>
@@ -113,7 +123,7 @@ const HoveringMenuExample = ({open,setOpen,handleClick,currentComment}) => {
 const toggleFormat = (editor, format,open,setOpen) => {
   const isActive = isFormatActive(editor, format)
   let id = uuidv4()
-
+  setOpen(true)
   Transforms.setNodes(
     editor,
     { [format]: isActive ? null : true, id:id },
@@ -141,8 +151,16 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
   const ref = useRef()
   const editor = useSlate()
   const inFocus = useFocused()
+  const {selection} = editor
   const [domCurrentSelection,setDOMCurrentSelection] = useState('')
   useEffect(() => {
+    // document.onselectionchange = () => {
+    //   console.log(document.getSelection());
+    //   toggleFormat(editor, "popup");
+    //   setTimeout(()=>console.log(1000),1000)
+
+    // };
+      
     const el = ref.current
     const { selection } = editor
 
@@ -159,9 +177,10 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
       el.removeAttribute('style')
       return
     }
-
+    // editor.onChange(()=>toggleFormat(editor,"popup"))
     const domSelection = window.getSelection()
       // setDOMCurrentSelection(domSelection)
+
         if(domSelection){
           const domRange =  domSelection?.getRangeAt(0)
           console.log(domRange?.getBoundingClientRect())
@@ -172,14 +191,16 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
             window.pageXOffset -
             el.offsetWidth / 2 +
             rect?.width / 2}px`
+         
         }
-})
+},[selection])
 
   return (
     <Portal>
-      <Menu
+      {/* <Menu
         ref={ref}
-        className={css`
+       
+      > className={css`
           padding: 8px 7px 6px;
           position: absolute;
           z-index: 1;
@@ -195,10 +216,9 @@ const HoveringToolbar = ({open,setOpen,handleClick,currentComment}) => {
           // prevent toolbar from taking focus away from editor
           e.preventDefault()
         }}
-      >
         <FormatButton format="popup" icon="Start Annotation" open={open} setOpen={setOpen} currentComment={currentComment}/>
 
-      </Menu>
+      </Menu> */}
     </Portal>
   )
 }
